@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de ROI — RD Station Conversas</title>
+<title>Calculadora de ROI — RD Station Atendimentos</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Ajuste cores: Fundo geral cinza azulado, textos em preto nos cards */
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F0F4F8; color: #1E293B; min-height: 100vh; }
 
   header { background: #0047FF; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
@@ -14,23 +15,25 @@
 
   .container { max-width: 980px; margin: 0 auto; padding: 32px 24px; }
 
-  .intro { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 28px; border-left: 4px solid #0047FF; box-shadow: 0 1px 4px rgba(0,0,0,0.06); color: #000; }
+  .intro { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 28px; border-left: 4px solid #0047FF; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
   .intro h2 { font-size: 16px; font-weight: 600; color: #0047FF; margin-bottom: 8px; }
-  .intro p { font-size: 14px; color: #000; line-height: 1.6; }
+  .intro p { font-size: 14px; color: #000000; line-height: 1.6; }
 
   .section-title { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
 
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
   @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
 
-  /* Ajuste Design: Fundo branco e texto preto nos cards */
+  /* DESIGN: Fundo Branco e Texto Preto */
   .card { background: #ffffff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); color: #000000; }
-  .card h3 { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px; }
+  .card h3 { font-size: 11px; font-weight: 700; color: #0047FF; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px; }
 
-  .field label { display: block; font-size: 14px; font-weight: 600; color: #000; margin-bottom: 6px; }
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 14px; font-weight: 600; color: #000000; margin-bottom: 6px; }
   .field-hint { font-size: 11px; color: #64748B; margin-bottom: 8px; font-style: italic; }
+  .field-row { display: flex; align-items: center; gap: 12px; }
   
-  /* Mantendo azul e laranja para interações */
+  input[type="range"] { flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px; background: #E2E8F0; outline: none; }
   input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #FF6B00; cursor: pointer; }
   .field-val { font-size: 14px; font-weight: 700; color: #0047FF; min-width: 80px; text-align: right; }
 
@@ -38,201 +41,419 @@
   .derived-label { font-size: 12px; color: #64748B; }
   .derived-val { font-size: 14px; font-weight: 700; color: #FF6B00; }
 
+  /* Yes/No toggle */
+  .yn-row { display: flex; gap: 10px; margin-top: 6px; }
+  .yn-btn { flex: 1; padding: 10px; border: 2px solid #E2E8F0; border-radius: 8px; background: #fff; font-size: 13px; font-weight: 600; color: #64748B; cursor: pointer; transition: all 0.15s; text-align: center; }
+  .yn-btn:hover { border-color: #0047FF; color: #0047FF; }
+  .yn-btn.active-yes { border-color: #0047FF; background: rgba(0,71,255,0.08); color: #0047FF; }
+  .yn-btn.active-no { border-color: #94A3B8; background: #F8FAFC; color: #475569; }
+
   /* Scenarios */
-  .scenario-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 10px; }
-  .scenario-card { background: #fff; border: 1.5px solid #E2E8F0; border-radius: 8px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .scenarios { margin-top: 14px; display: none; }
+  .scenarios.visible { display: block; }
+  .scenarios-title { font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 10px; }
+  .scenario-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .scenario-card { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 8px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .scenario-card:hover { border-color: #0047FF; }
   .scenario-card.active { border-color: #0047FF; background: rgba(0,71,255,0.07); }
   .sc-pct { font-size: 18px; font-weight: 800; color: #0047FF; }
-  .sc-economia { font-size: 10px; font-weight: 600; color: #FF6B00; margin-top: 4px; }
+  .sc-lbl { font-size: 10px; color: #64748B; margin-top: 2px; }
+  .sc-economia { font-size: 11px; font-weight: 600; color: #FF6B00; margin-top: 6px; }
 
-  /* Tooltip Estilizado */
+  .no-data-msg { margin-top: 10px; background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #92400E; display: none; }
+  .no-data-msg.visible { display: block; }
+
+  /* Toggle Blindspot */
+  .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .toggle-label { font-size: 13px; color: #475569; }
+  .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: #CBD5E1; border-radius: 22px; cursor: pointer; transition: background 0.2s; }
+  .toggle-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .toggle-switch input:checked + .toggle-slider { background: rgba(239,68,68,0.35); }
+  .toggle-switch input:checked + .toggle-slider:before { transform: translateX(18px); }
+
+  .blindspot { background: #FEF2F2; border: 1.5px solid #FECACA; border-radius: 10px; padding: 16px; margin-top: 6px; display: none; }
+  .blindspot.visible { display: block; }
+  .blindspot-title { font-size: 13px; font-weight: 700; color: #DC2626; margin-bottom: 10px; }
+  .bs-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .bs-stat { background: #fff; border-radius: 8px; padding: 10px; text-align: center; border: 1px solid #FECACA; }
+  .bs-val { font-size: 17px; font-weight: 700; color: #DC2626; margin-bottom: 2px; }
+  .bs-lbl { font-size: 10px; color: #94A3B8; line-height: 1.4; }
+
+  .conv-slider { display: none; }
+  .conv-slider.visible { display: block; }
+
+  /* Results */
+  .results { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .results h3 { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 18px; }
+  .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 540px) { .result-grid { grid-template-columns: 1fr 1fr; } }
+  .stat { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px; text-align: center; position: relative; }
+  .stat-val { font-size: 20px; font-weight: 700; color: #0047FF; margin-bottom: 4px; }
+  .stat-lbl { font-size: 11px; color: #64748B; line-height: 1.4; }
+  .stat.dimmed .stat-val { color: #CBD5E1; }
+
+  /* Tooltip */
   .tip-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: #0047FF; color: #fff; font-size: 10px; font-weight: 700; cursor: help; position: absolute; top: 8px; right: 8px; }
-  .tip-icon:hover::after { content: attr(data-tip); position: absolute; bottom: 120%; right: 0; background: #1E293B; color: #fff; font-size: 11px; font-weight: 400; padding: 8px 12px; border-radius: 6px; width: 220px; z-index: 100; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .tip-icon:hover::after { content: attr(data-tip); position: absolute; bottom: 120%; right: 0; background: #1E293B; color: #fff; font-size: 11px; font-weight: 400; padding: 6px 10px; border-radius: 6px; white-space: normal; width: 200px; line-height: 1.4; z-index: 10; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
-  /* Tabela IA Simples */
-  .simple-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-  .simple-table th { background: #0047FF; color: #fff; padding: 10px; text-align: left; }
-  .simple-table td { padding: 12px 10px; border-bottom: 1px solid #E2E8F0; color: #000; }
+  /* Rational Table */
+  .rational { background: #F8FAFC; border-radius: 10px; padding: 16px; margin-bottom: 16px; border: 1px solid #E2E8F0; }
+  .rational-title { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; }
+  .rational-row { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px solid #E2E8F0; font-size: 12px; gap: 8px; }
+  .rational-row:last-child { border-bottom: none; }
+  .rational-desc { color: #000000; flex: 1; }
+  .rational-formula { color: #94A3B8; font-size: 11px; font-style: italic; flex: 1; text-align: center; }
+  .rational-result { color: #1E293B; font-weight: 600; text-align: right; min-width: 90px; }
+  .rational-result.highlight { color: #FF6B00; }
 
-  .roi-box { background: #0047FF; border-radius: 10px; padding: 20px; display: flex; align-items: center; justify-content: space-between; color: white; margin-top: 20px; }
-  .roi-number { font-size: 48px; font-weight: 800; }
+  .roi-box { background: #0047FF; border-radius: 10px; padding: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .roi-box-left h4 { font-size: 14px; font-weight: 600; color: #fff; }
+  .roi-box-left p { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 4px; max-width: 480px; }
+  .roi-number { font-size: 48px; font-weight: 800; color: #fff; }
 
-  .risk-stat { color: #DC2626; font-weight: 700; background: #FEF2F2; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+  .bench-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); color: #000; }
+  .bench-card h3 { font-size: 11px; font-weight: 700; color: #0047FF; text-transform: uppercase; margin-bottom: 14px; }
+  .compare-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
+  .badge-g { background: rgba(16,185,129,0.12); color: #059669; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-r { background: rgba(239,68,68,0.1); color: #DC2626; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+
+  .risk-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); color: #000; }
+  .risk-stat { font-size: 11px; font-weight: 700; color: #DC2626; background: #FEF2F2; padding: 2px 8px; border-radius: 6px; }
+
+  footer { text-align: center; padding: 28px 24px; font-size: 11px; color: #94A3B8; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>ROI Framework — RD Station Conversas</h1>
-  <span>Ferramenta de Apoio a Vendas</span>
+  <h1>ROI Framework — RD Station Atendimentos</h1>
+  <span>Ferramenta interna para vendedores</span>
 </header>
 
 <div class="container">
 
-  <p class="section-title">1. Estrutura de Atendimento</p>
+  <div class="intro">
+    <h2>Como usar esta ferramenta</h2>
+    <p>Preencha os campos abaixo com os dados do prospect. <strong>Se o cliente não souber um dado de automação, use os cenários sugeridos.</strong> O objetivo é mostrar o ganho total antes de revelar o investimento.</p>
+  </div>
+
+  <p class="section-title">1. Custo atual de atendimento</p>
   <div class="grid2">
     <div class="card">
-      <h3>Equipe</h3>
+      <h3>Equipe de atendimento</h3>
       <div class="field">
-        <label>Atendentes na operação</label>
+        <label>Quantas pessoas fazem atendimento?</label>
+        <div class="field-hint">Time que responde WhatsApp, chat, e-mail.</div>
         <div class="field-row">
           <input type="range" min="1" max="50" step="1" value="3" id="s-func" oninput="calc()">
           <span class="field-val" id="v-func">3</span>
         </div>
       </div>
       <div class="field">
-        <label>Salário + Encargos (R$)</label>
+        <label>Salário médio por atendente (R$)</label>
         <div class="field-row">
           <input type="range" min="1500" max="8000" step="100" value="3000" id="s-salario" oninput="calc()">
           <span class="field-val" id="v-salario">R$3.000</span>
         </div>
       </div>
+      <div class="field">
+        <label>% do tempo dedicado ao atendimento</label>
+        <div class="field-row">
+          <input type="range" min="10" max="100" step="5" value="70" id="s-tempo" oninput="calc()">
+          <span class="field-val" id="v-tempo">70%</span>
+        </div>
+      </div>
       <div class="derived">
         <span class="derived-label">Custo mensal operacional</span>
-        <span class="derived-val" id="d-custo-total">R$9.000</span>
+        <span class="derived-val" id="d-custo-total">R$6.300</span>
       </div>
     </div>
 
     <div class="card">
-      <h3>Demanda e Automação</h3>
+      <h3>Volume e Perfil de Atendimentos</h3>
       <div class="field">
-        <label>Volume de atendimentos /mês</label>
-        <input type="range" min="50" max="10000" step="50" value="500" id="s-atend" oninput="calc()" style="width:100%">
-        <div style="text-align:right" class="field-val" id="v-atend">500</div>
+        <label>Atendimentos por mês</label>
+        <div class="field-hint">Volume total de chamados/conversas mensais.</div>
+        <div class="field-row">
+          <input type="range" min="10" max="10000" step="10" value="500" id="s-atend" oninput="calc()">
+          <span class="field-val" id="v-atend">500</span>
+        </div>
       </div>
-      
-      <label style="font-size:14px; font-weight:600">Possui atendimentos repetitivos?</label>
-      <div class="scenario-cards">
-        <div class="scenario-card" id="sc10" onclick="selectScenario(10)">
-          <div class="sc-pct">10%</div>
-          <div class="sc-lbl">Baixo</div>
-          <div class="sc-economia" id="sc10-val">R$0</div>
+
+      <div class="field">
+        <label>O seu time precisa responder perguntas repetitivas?</label>
+        <div class="field-hint">Preço, horário, status de pedido, boletos, etc.</div>
+        <div class="yn-row">
+          <button class="yn-btn active-yes" id="btn-sim" onclick="selectRepetitivo('sim')">✓ Sim</button>
+          <button class="yn-btn" id="btn-nao" onclick="selectRepetitivo('nao')">✗ Não sabe / Não</button>
         </div>
-        <div class="scenario-card active" id="sc30" onclick="selectScenario(30)">
-          <div class="sc-pct">30%</div>
-          <div class="sc-lbl">Médio</div>
-          <div class="sc-economia" id="sc30-val">R$0</div>
-        </div>
-        <div class="scenario-card" id="sc50" onclick="selectScenario(50)">
-          <div class="sc-pct">50%</div>
-          <div class="sc-lbl">Alto</div>
-          <div class="sc-economia" id="sc50-val">R$0</div>
+
+        <div class="scenarios visible" id="scenarios-box">
+          <div class="scenarios-title">Escolha um cenário para estimar a automação:</div>
+          <div class="scenario-cards">
+            <div class="scenario-card" id="sc10" onclick="selectScenario(10)">
+              <div class="sc-pct">10%</div>
+              <div class="sc-lbl">Baixo</div>
+              <div class="sc-economia" id="sc10-val">—</div>
+            </div>
+            <div class="scenario-card active" id="sc30" onclick="selectScenario(30)">
+              <div class="sc-pct">30%</div>
+              <div class="sc-lbl">Comum</div>
+              <div class="sc-economia" id="sc30-val">—</div>
+            </div>
+            <div class="scenario-card" id="sc50" onclick="selectScenario(50)">
+              <div class="sc-pct">50%</div>
+              <div class="sc-lbl">Alto</div>
+              <div class="sc-economia" id="sc50-val">—</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="card" style="margin-bottom:20px; position:relative;">
-    <span class="tip-icon" data-tip="Racional: (Custo Operacional Total x % de Automação) + Ganho de Eficiência de 5% no Funil Comercial. A IA reduz o tempo de resposta de horas para segundos, evitando a perda de leads para a concorrência.">i</span>
-    <h3 style="color:#0047FF">Resultado estimado para este prospect</h3>
-    
-    <div class="grid2" style="margin-top:20px">
-      <div>
-        <p style="font-size:12px; color:#64748B">Economia Operacional Mensal</p>
-        <p style="font-size:24px; font-weight:800; color:#FF6B00" id="r-economia">R$ 0,00</p>
+  <p class="section-title">2. Potencial de Receita via WhatsApp</p>
+  <div class="grid2">
+    <div class="card">
+      <h3>Dados de Leads</h3>
+      <div class="field">
+        <label>Atendimentos comerciais por mês</label>
+        <div class="field-row">
+          <input type="range" min="0" max="3000" step="10" value="300" id="s-leads" oninput="calc()">
+          <span class="field-val" id="v-leads">300</span>
+        </div>
       </div>
-      <div style="text-align:right">
-        <p style="font-size:12px; color:#64748B">Impacto Anual Estimado</p>
-        <p style="font-size:24px; font-weight:800; color:#0047FF" id="r-anual">R$ 0,00</p>
+      <div class="field">
+        <label>Ticket Médio (R$)</label>
+        <div class="field-row">
+          <input type="range" min="50" max="10000" step="50" value="500" id="s-ticket" oninput="calc()">
+          <span class="field-val" id="v-ticket">R$500</span>
+        </div>
       </div>
     </div>
 
-    <div class="roi-box">
-      <div>
-        <strong>ROI Estimado (12 meses)</strong>
-        <p style="font-size:11px; opacity:0.8">Baseado na redução de tempo humano e ganho de escala.</p>
+    <div class="card">
+      <h3>Taxa de Conversão</h3>
+      <div class="field">
+        <label>O prospect sabe a taxa de conversão?</label>
+        <div class="toggle-row">
+          <span class="toggle-label">Sim</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-blind" onchange="toggleBlind()">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label" style="color:#DC2626; font-weight:600;">Não sabe</span>
+        </div>
+
+        <div class="conv-slider visible" id="conv-known">
+          <div class="field-row">
+            <input type="range" min="1" max="25" step="1" value="5" id="s-conv" oninput="calc()">
+            <span class="field-val" id="v-conv">5%</span>
+          </div>
+        </div>
+
+        <div class="blindspot" id="blindspot-panel">
+          <div class="blindspot-title">⚠ Custo da Invisibilidade</div>
+          <div class="bs-stats">
+            <div class="bs-stat">
+              <div class="bs-val" id="bs1">—</div>
+              <div class="bs-lbl">Receita perdida/mês (Benchmark 5%)</div>
+            </div>
+            <div class="bs-stat">
+              <div class="bs-val" id="bs2">—</div>
+              <div class="bs-lbl">Atendimentos sem follow-up</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-title">3. Valor do Plano</p>
+  <div class="card" style="margin-bottom: 20px;">
+    <h3>Investimento RD Station Atendimentos</h3>
+    <div class="field-row">
+      <input type="range" min="200" max="5000" step="50" value="1000" id="s-plano" oninput="calc()">
+      <span class="field-val" id="v-plano">R$1.000/mês</span>
+    </div>
+    <div class="derived">
+      <span class="derived-label">Investimento Anual</span>
+      <span class="derived-val" id="d-plano-anual">R$12.000</span>
+    </div>
+  </div>
+
+  <div class="results">
+    <h3>Resultado estimado para este prospect</h3>
+
+    <div class="result-grid">
+      <div class="stat">
+        <span class="tip-icon" data-tip="Racional: Custo mensal operacional × % de atendimentos automatizáveis. Representa o valor que deixa de ser gasto em tempo humano repetitivo.">i</span>
+        <div class="stat-val" id="r-economia">R$0</div>
+        <div class="stat-lbl">Economia mensal<br>(operacional)</div>
+      </div>
+      <div class="stat" id="stat-receita">
+        <span class="tip-icon" data-tip="Racional: Leads × 5% de melhoria de conversão × Ticket Médio. Representa o ganho ao não perder leads por demora na resposta.">i</span>
+        <div class="stat-val" id="r-receita">R$0</div>
+        <div class="stat-lbl">Receita incremental<br>(Eficiência)</div>
+      </div>
+      <div class="stat" id="stat-anual">
+        <span class="tip-icon" data-tip="Racional: (Economia Mensal + Receita Incremental) × 12 meses. Valor total injetado no negócio em um ano.">i</span>
+        <div class="stat-val" id="r-anual">R$0</div>
+        <div class="stat-lbl">Ganho Total<br>em 12 meses</div>
+      </div>
+    </div>
+
+    <div class="rational">
+      <div class="rational-title">Racional dos cálculos</div>
+      <div class="rational-row">
+        <span class="rational-desc">Custo mensal de atendimento</span>
+        <span class="rational-formula" id="f1">—</span>
+        <span class="rational-result" id="rr1">—</span>
+      </div>
+      <div class="rational-row">
+        <span class="rational-desc">Atendimentos automatizáveis</span>
+        <span class="rational-formula" id="f2">—</span>
+        <span class="rational-result" id="rr2">—</span>
+      </div>
+      <div class="rational-row">
+        <span class="rational-desc">Economia mensal (Automação)</span>
+        <span class="rational-formula" id="f3">—</span>
+        <span class="rational-result highlight" id="rr3">—</span>
+      </div>
+      <div class="rational-row" id="rational-receita-row">
+        <span class="rational-desc">Ganho em conversão (+5%)</span>
+        <span class="rational-formula" id="f4">—</span>
+        <span class="rational-result highlight" id="rr4">—</span>
+      </div>
+      <div class="rational-row">
+        <span class="rational-desc">Investimento anual no plano</span>
+        <span class="rational-formula" id="f6">—</span>
+        <span class="rational-result" id="rr6">—</span>
+      </div>
+    </div>
+
+    <div class="roi-box" id="roi-box">
+      <div class="roi-box-left">
+        <h4 id="roi-title">ROI estimado (12 meses)</h4>
+        <p id="roi-sub">Cálculo conservador baseado em eficiência operacional e comercial.</p>
       </div>
       <div class="roi-number" id="r-roi">0x</div>
     </div>
   </div>
 
-  <div class="grid2">
-    <div class="card">
+  <div class="benchmark-wrap">
+    <div class="bench-card">
       <h3>Humano vs IA + Humano</h3>
-      <table class="simple-table">
-        <thead>
-          <tr>
-            <th>Critério</th>
-            <th>Humano Puro</th>
-            <th>Híbrido (IA)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Disponibilidade</td>
-            <td>Comercial (8h)</td>
-            <td><strong>24/7</strong></td>
-          </tr>
-          <tr>
-            <td>1º Resposta</td>
-            <td>> 30 min</td>
-            <td><strong>< 10 seg</strong></td>
-          </tr>
-          <tr>
-            <td>Escalar volume</td>
-            <td>Lento (Contratar)</td>
-            <td><strong>Imediato</strong></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="compare-row"><span class="compare-dim">Disponibilidade</span><div><span class="badge-r">8h/dia</span> → <span class="badge-g">24/7</span></div></div>
+      <div class="compare-row"><span class="compare-dim">Tempo de Resposta</span><div><span class="badge-r">> 6 horas</span> → <span class="badge-g">< 2 min</span></div></div>
+      <div class="compare-row"><span class="compare-dim">Escalabilidade</span><div><span class="badge-r">Lenta/Cara</span> → <span class="badge-g">Imediata</span></div></div>
     </div>
 
-    <div class="card">
-      <h3>Riscos da Operação Sem API</h3>
-      <div style="font-size:12px; line-height:1.5">
-        <p>⚠️ <strong>Bloqueio de Número:</strong> Sem API oficial, o risco de banimento por envios em massa é alto. 
-        <span class="risk-stat">Recuperação: 24h a 7 dias ou perda permanente.</span></p>
-        <hr style="margin:10px 0; border:0; border-top:1px solid #eee">
-        <p>💸 <strong>Perda de Produtividade:</strong> Empresas sem IA perdem tempo valioso em triagens.
-        <span class="risk-stat">Perda média: 25% do tempo do time.</span></p>
-      </div>
+    <div class="risk-card">
+      <h3>⚠️ Riscos da API Não Oficial</h3>
+      <p style="font-size:12px; margin-bottom:10px">O uso de soluções "gambiarra" pode custar caro:</p>
+      <div class="compare-row"><span>Bloqueio Imediato</span><span class="risk-stat">24h a 7 dias</span></div>
+      <div class="compare-row"><span>Banimento Permanente</span><span class="risk-stat">Perda do Número</span></div>
+      <div class="compare-row"><span>Perda de Produtividade</span><span class="risk-stat">~25% do tempo</span></div>
+      <p style="font-size:10px; margin-top:10px; color:#94A3B8">Fontes: Meta Business Policy 2026, Juniper Research.</p>
     </div>
   </div>
 
 </div>
 
-<script>
-let autoRate = 0.30;
+<footer>
+  RD Station Atendimentos · Framework de ROI Consultivo
+</footer>
 
-function selectScenario(pct) {
-  autoRate = pct / 100;
-  document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
-  document.getElementById('sc' + pct).classList.add('active');
+<script>
+var autoRate = 0.30;
+var temRepetitivo = true;
+
+function selectRepetitivo(val) {
+  temRepetitivo = val === 'sim';
+  document.getElementById('btn-sim').className = 'yn-btn' + (temRepetitivo ? ' active-yes' : '');
+  document.getElementById('btn-nao').className = 'yn-btn' + (!temRepetitivo ? ' active-no' : '');
+  document.getElementById('scenarios-box').classList.toggle('visible', temRepetitivo);
+  if (!temRepetitivo) autoRate = 0; else autoRate = 0.30;
   calc();
 }
 
-function calc() {
-  const func = +document.getElementById('s-func').value;
-  const salario = +document.getElementById('s-salario').value;
-  const atend = +document.getElementById('s-atend').value;
-  const investimentoMensal = 1000; // Valor base plano
-
-  // Atualiza labels
-  document.getElementById('v-func').innerText = func;
-  document.getElementById('v-salario').innerText = 'R$' + salario.toLocaleString('pt-BR');
-  document.getElementById('v-atend').innerText = atend;
-
-  const custoMensal = func * salario;
-  const economiaMensal = custoMensal * autoRate;
-  const ganhoAnual = (economiaMensal * 12);
-  const roi = ganhoAnual / (investimentoMensal * 12);
-
-  // Resultados na tela
-  document.getElementById('d-custo-total').innerText = 'R$' + custoMensal.toLocaleString('pt-BR');
-  document.getElementById('r-economia').innerText = 'R$ ' + economiaMensal.toLocaleString('pt-BR');
-  document.getElementById('r-anual').innerText = 'R$ ' + ganhoAnual.toLocaleString('pt-BR');
-  document.getElementById('r-roi').innerText = roi.toFixed(1) + 'x';
-
-  // Atualiza mini valores nos cards de cenário
-  [10, 30, 50].forEach(p => {
-    const eco = custoMensal * (p / 100);
-    document.getElementById('sc' + p + '-val').innerText = 'R$' + Math.round(eco);
-  });
+function selectScenario(pct) {
+  [10,30,50].forEach(p => document.getElementById('sc'+p).classList.toggle('active', p === pct));
+  autoRate = pct / 100;
+  calc();
 }
 
-// Inicializa
+function toggleBlind() {
+  var isBlind = document.getElementById('toggle-blind').checked;
+  document.getElementById('conv-known').classList.toggle('visible', !isBlind);
+  document.getElementById('blindspot-panel').classList.toggle('visible', isBlind);
+  document.getElementById('stat-receita').style.opacity = isBlind ? '0.3' : '1';
+  calc();
+}
+
+function fmt(n) { return 'R$' + Math.round(n).toLocaleString('pt-BR'); }
+
+function calc() {
+  var func = +document.getElementById('s-func').value;
+  var salario = +document.getElementById('s-salario').value;
+  var tempo = +document.getElementById('s-tempo').value / 100;
+  var atend = +document.getElementById('s-atend').value;
+  var leads = +document.getElementById('s-leads').value;
+  var ticket = +document.getElementById('s-ticket').value;
+  var plano = +document.getElementById('s-plano').value;
+  var isBlind = document.getElementById('toggle-blind').checked;
+
+  document.getElementById('v-func').textContent = func;
+  document.getElementById('v-salario').textContent = fmt(salario);
+  document.getElementById('v-tempo').textContent = (tempo*100) + '%';
+  document.getElementById('v-atend').textContent = atend;
+  document.getElementById('v-leads').textContent = leads;
+  document.getElementById('v-ticket').textContent = fmt(ticket);
+  document.getElementById('v-plano').textContent = fmt(plano) + '/mês';
+
+  var custoMensal = func * salario * tempo;
+  var economiaMes = custoMensal * autoRate;
+  var investAnual = plano * 12;
+
+  document.getElementById('d-custo-total').textContent = fmt(custoMensal);
+  document.getElementById('d-plano-anual').textContent = fmt(investAnual);
+  document.getElementById('r-economia').textContent = fmt(economiaMes);
+
+  [10,30,50].forEach(p => {
+    document.getElementById('sc'+p+'-val').textContent = 'Ganho: ' + fmt(custoMensal * (p/100));
+  });
+
+  // Racional de Cálculos
+  document.getElementById('f1').textContent = func + ' atendentes x ' + fmt(salario) + ' x ' + (tempo*100) + '%';
+  document.getElementById('rr1').textContent = fmt(custoMensal);
+  document.getElementById('f2').textContent = atend + ' atendimentos x ' + (autoRate*100) + '%';
+  document.getElementById('rr2').textContent = Math.round(atend * autoRate) + ' automatizados';
+  document.getElementById('f3').textContent = fmt(custoMensal) + ' x ' + (autoRate*100) + '%';
+  document.getElementById('rr3').textContent = fmt(economiaMes);
+  document.getElementById('f6').textContent = fmt(plano) + ' x 12 meses';
+  document.getElementById('rr6').textContent = fmt(investAnual);
+
+  var receitaIncr = leads * 0.05 * ticket;
+  if (isBlind) {
+    document.getElementById('bs1').textContent = fmt(leads * 0.05 * ticket);
+    document.getElementById('bs2').textContent = Math.round(leads * 0.4) + ' contatos';
+    document.getElementById('r-receita').textContent = '—';
+    var ganhoTotal = economiaMes * 12;
+    document.getElementById('r-anual').textContent = fmt(ganhoTotal);
+    document.getElementById('r-roi').textContent = (ganhoTotal/investAnual).toFixed(1) + 'x';
+  } else {
+    document.getElementById('r-receita').textContent = fmt(receitaIncr);
+    var ganhoTotal = (economiaMes + receitaIncr) * 12;
+    document.getElementById('r-anual').textContent = fmt(ganhoTotal);
+    document.getElementById('r-roi').textContent = (ganhoTotal/investAnual).toFixed(1) + 'x';
+    document.getElementById('f4').textContent = leads + ' leads x 5% x ' + fmt(ticket);
+    document.getElementById('rr4').textContent = fmt(receitaIncr);
+  }
+}
 calc();
 </script>
-
 </body>
 </html>
