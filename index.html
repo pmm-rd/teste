@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de ROI — RD Station Conversas</title>
+<title> Sales Tool Kit — RD Station Conversas</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F0F4F8; color: #1E293B; min-height: 100vh; }
@@ -100,15 +100,29 @@
   .tip-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: #E2E8F0; color: #64748B; font-size: 10px; font-weight: 700; cursor: help; position: absolute; top: 8px; right: 8px; }
   .tip-icon:hover::after { content: attr(data-tip); position: absolute; bottom: 120%; right: 0; background: #1E293B; color: #fff; font-size: 11px; font-weight: 400; padding: 6px 10px; border-radius: 6px; white-space: normal; width: 200px; line-height: 1.4; z-index: 10; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
-  /* Rational */
-  .rational { background: #F8FAFC; border-radius: 10px; padding: 16px; margin-bottom: 16px; border: 1px solid #E2E8F0; }
-  .rational-title { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; }
-  .rational-row { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px solid #E2E8F0; font-size: 12px; gap: 8px; }
+  /* Cenário buttons */
+  .cenario-btn { background: #F1F5F9; border: 1.5px solid #E2E8F0; border-radius: 6px; font-size: 10px; font-weight: 600; color: #64748B; cursor: pointer; padding: 4px 6px; line-height: 1.3; transition: all 0.15s; text-align: center; }
+  .cenario-btn:hover { border-color: #00A896; color: #00A896; }
+  .cenario-btn.active { border-color: #00A896; background: rgba(0,168,150,0.1); color: #00A896; }
+
+  /* Benefits table */
+  .benefits-table { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px; margin: 16px 0; }
+  .benefits-title { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+  .benefit-row { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #E2E8F0; }
+  .benefit-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .benefit-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .benefit-body { flex: 1; }
+  .benefit-headline { font-size: 13px; font-weight: 600; color: #1E293B; margin-bottom: 4px; line-height: 1.4; }
+  .benefit-desc { font-size: 12px; color: #64748B; line-height: 1.6; }
+
+  /* Rational compact */
+  .rational-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #E2E8F0; font-size: 12px; gap: 8px; }
   .rational-row:last-child { border-bottom: none; }
-  .rational-desc { color: #64748B; flex: 1; }
-  .rational-formula { color: #94A3B8; font-size: 11px; font-style: italic; flex: 1; text-align: center; }
+  .rational-desc { color: #475569; flex: 1; font-weight: 500; }
   .rational-result { color: #1E293B; font-weight: 600; text-align: right; min-width: 90px; }
   .rational-result.highlight { color: #00A896; }
+  .rational-tip { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: #E2E8F0; color: #64748B; font-size: 10px; font-weight: 700; cursor: help; flex-shrink: 0; position: relative; }
+  .rational-tip:hover::after { content: attr(data-tip); position: absolute; bottom: 120%; right: 0; background: #1E293B; color: #fff; font-size: 11px; font-weight: 400; padding: 8px 12px; border-radius: 6px; white-space: normal; width: 280px; line-height: 1.6; z-index: 10; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
   .roi-box { background: #00A896; border-radius: 10px; padding: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .roi-box-left h4 { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.95); }
@@ -180,7 +194,7 @@
 <body>
 
 <header>
-  <h1>ROI Framework — RD Station Conversas</h1>
+  <h1> Cálculadora de ROI e geração de valor RD Station Conversas</h1>
   <span>Ferramenta interna para vendedores</span>
 </header>
 
@@ -190,6 +204,62 @@
     <h2>Como usar esta ferramenta</h2>
     <p>Preencha os campos abaixo com os dados do prospect durante a descoberta. <strong>Se o cliente não souber um dado, use as estimativas de cenário.</strong> Mostre o número de ROI antes de revelar o preço da ferramenta.</p>
   </div>
+  
+  <div class="card" style="margin-bottom: 28px; border: 2px solid #00A896;">
+  <h3>Identificação da Simulação</h3>
+  <form id="registroForm">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+      <div class="field">
+        <label>Seu Nome</label>
+        <input type="text" id="vendedor_nome" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0;">
+      </div>
+      <div class="field">
+        <label>Número da Oportunidade (Salesforce)</label>
+        <input type="text" id="sf_id" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0;">
+      </div>
+    </div>
+    <button type="submit" id="btnSalvar" style="width: 100%; background: #00A896; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;">
+      Salvar na Planilha
+    </button>
+  </form>
+  <p id="msgSucesso" style="display:none; color: #059669; font-size: 13px; margin-top: 10px; text-align: center; font-weight: bold;">
+    ✔ Dados salvos com sucesso!
+  </p>
+</div>
+
+<script>
+document.getElementById('registroForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const btn = document.getElementById('btnSalvar');
+  const msg = document.getElementById('msgSucesso');
+  const nome = document.getElementById('vendedor_nome').value;
+  const opp = document.getElementById('sf_id').value;
+
+  btn.innerText = "Salvando...";
+  btn.disabled = true;
+
+  // URL que você vai gerar no Passo 2
+  const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwFBYGZ4rDcTu1xUbb-w4sJnScbLp-ZWn0iHoXZGNmhmyFWsnf9QnRL-I5SGF7-jPWl/exec';
+
+  // Enviando os dados via URL (mais simples e evita erros)
+  fetch(`${URL_SCRIPT}?nome=${encodeURIComponent(nome)}&oportunidade=${encodeURIComponent(opp)}`, {
+    method: 'GET',
+    mode: 'no-cors'
+  })
+  .then(() => {
+    msg.style.display = "block";
+    btn.innerText = "Salvo!";
+    btn.style.background = "#94A3B8";
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Erro ao salvar.");
+    btn.disabled = false;
+    btn.innerText = "Tentar novamente";
+  });
+});
+</script>
 
   <!-- ── BLOCO 1 ── -->
   <p class="section-title">1. Custo atual de atendimento</p>
@@ -356,12 +426,13 @@
       <label>Qual o valor mensal do plano que o cliente pagaria? (R$)</label>
       <div class="field-hint">Preencha com o valor do plano adequado para o perfil do prospect. O investimento anual é calculado automaticamente.</div>
       <div class="field-row">
-        <input type="range" min="200" max="5000" step="50" value="1000" id="s-plano" oninput="calc()">
-        <span class="field-val" id="v-plano">R$1.000/mês</span>
+        <input type="range" min="1300" max="6000" step="50" value="1300" id="s-plano" oninput="calc()">
+        <span class="field-val" id="v-plano">R$1.300/mês</span>
       </div>
       <div class="derived" style="margin-top: 10px;">
         <span class="derived-label">Investimento anual total</span>
-        <span class="derived-val" id="d-plano-anual">R$12.000</span>
+        <span class="derived-val" id="d-plano-anual">R$15.600</span>
+      <p style="font-size:11px; color:#94A3B8; margin-top:10px;">* O valor considera apenas o valor do plano, sem considerar os gastos de conversas cobrados pela Meta.</p>
       </div>
     </div>
   </div>
@@ -370,58 +441,106 @@
   <div class="results">
     <h3>Resultado estimado para este prospect</h3>
 
-    <div class="result-grid">
+    <div class="result-grid" style="grid-template-columns: repeat(4,1fr);">
       <div class="stat" id="stat-economia">
-        <span class="tip-icon" data-tip="Custo mensal de atendimento × % de atendimentos repetitivos. Premissa: esses atendimentos deixam de consumir tempo do time.">i</span>
+        <span class="tip-icon" data-tip="O que é: o dinheiro economizado porque atendimentos repetitivos passam a ser resolvidos pela automação, sem custo de tempo humano. Como calculamos: custo mensal de atendimento × % de atendimentos repetitivos (cenário selecionado).">i</span>
         <div class="stat-val" id="r-economia">R$0</div>
-        <div class="stat-lbl">Economia mensal<br>(custo operacional)</div>
+        <div class="stat-lbl">Economia c/<br>automação total</div>
       </div>
-      <div class="stat" id="stat-receita">
-        <span class="tip-icon" data-tip="Leads × 5% de melhora de conversão × ticket médio. Os 5% representam o ganho estimado com respostas mais rápidas e consistentes via automação.">i</span>
+      <div class="stat" id="stat-parcial">
+        <span class="tip-icon" data-tip="O que é: tempo economizado pelo time com triagem automática — primeira resposta imediata 24/7, coleta de nome e e-mail, boas-vindas fora do horário. Mesmo atendimentos que ainda passam para o humano ficam mais rápidos. Como calculamos: custo mensal × 30%, estimativa conservadora de eficiência ganha.">i</span>
+        <div class="stat-val" id="r-parcial">R$0</div>
+        <div class="stat-lbl">Economia c/<br>automação parcial</div>
+      </div>
+      <div class="stat" id="stat-receita" style="padding-bottom: 10px;">
+        <span class="tip-icon" data-tip="O que é: receita adicional gerada com melhora na taxa de conversão — resultado de respostas mais rápidas, atendimento 24/7 e menos leads sem retorno. Como calculamos: leads/mês × % de melhora de conversão × ticket médio.">i</span>
         <div class="stat-val" id="r-receita">R$0</div>
-        <div class="stat-lbl" id="r-receita-lbl">Receita incremental<br>(+5% de conversão)</div>
+        <div class="stat-lbl" id="r-receita-lbl" style="margin-bottom:8px;">Receita incremental<br><span id="cenario-label" style="color:#00A896; font-weight:700;">+1% conversão</span></div>
+        <div style="display:flex; gap:4px; justify-content:center; flex-wrap:wrap;">
+          <button class="cenario-btn active" id="cb1" onclick="selectCenario(1)">Conservador<br>+1%</button>
+          <button class="cenario-btn" id="cb3" onclick="selectCenario(3)">Possível<br>+3%</button>
+          <button class="cenario-btn" id="cb6" onclick="selectCenario(6)">Otimista<br>+6%</button>
+        </div>
       </div>
       <div class="stat" id="stat-anual">
-        <span class="tip-icon" data-tip="(Economia mensal + Receita incremental) × 12 meses. Não considera ganhos de retenção, NPS e dados operacionais.">i</span>
+        <span class="tip-icon" data-tip="O que é: soma de todos os ganhos ao longo de 12 meses — economia com automação total, parcial e receita incremental. Como calculamos: (automação total + automação parcial + receita incremental) × 12 meses. Não considera ganhos de retenção, NPS e dados operacionais.">i</span>
         <div class="stat-val" id="r-anual">R$0</div>
         <div class="stat-lbl">Ganho total<br>estimado em 12 meses</div>
       </div>
     </div>
 
+    <!-- Benefícios em linguagem clara -->
+    <div class="benefits-table">
+      <div class="benefits-title">O que isso significa na prática</div>
+      <div class="benefit-row">
+        <div class="benefit-icon">🤖</div>
+        <div class="benefit-body">
+          <div class="benefit-headline">Com 30% de automação parcial, você economiza <strong id="rr3b"></strong></div>
+          <div class="benefit-desc">Mesmo os atendimentos que ainda precisam de um humano ficam mais eficientes: o bot responde na hora, coleta as informações iniciais e direciona o cliente — tudo antes de o atendente abrir a conversa. Menos tempo gasto por atendimento, mais atendimentos resolvidos com a mesma equipe.</div>
+        </div>
+      </div>
+      <div class="benefit-row">
+        <div class="benefit-icon">📈</div>
+        <div class="benefit-body">
+          <div class="benefit-headline">Escale sua operação sem sobrecarregar o time — e sem precisar contratar mais ninguém</div>
+          <div class="benefit-desc">Com IA e automação, cada atendente resolve mais em menos tempo. O volume de atendimentos cresce, mas o custo não cresce na mesma proporção. Em vez de contratar uma nova pessoa quando a demanda aumentar, você configura — e a ferramenta absorve o pico sem atritos.</div>
+        </div>
+      </div>
+      <div class="benefit-row">
+        <div class="benefit-icon">🕐</div>
+        <div class="benefit-body">
+          <div class="benefit-headline">Atendimento 24/7: nenhum lead fica sem resposta por falta de horário</div>
+          <div class="benefit-desc">Clientes enviam mensagens no final de semana, à noite, fora do expediente. Sem automação, essas mensagens ficam paradas até o próximo dia útil — e parte dos leads desiste. Com o bot ativo, a resposta é imediata, o lead é acolhido e as informações são coletadas para quando o time retornar.</div>
+        </div>
+      </div>
+      <div class="benefit-row">
+        <div class="benefit-icon">💼</div>
+        <div class="benefit-body">
+          <div class="benefit-headline">Esse ganho reduz a necessidade de novas contratações ou sobrecarga do time.</div>
+          <div class="benefit-desc">Em vez de ampliar o time ou sobrecarregar seus atendentes para dar conta do volume, a automação gera uma economia equivalente ou evita que esse gasto precise acontecer.</div>
+        </div>
+      </div>
+    </div>
+
     <div class="rational">
-      <div class="rational-title">Como chegamos nesses números</div>
+      <div class="rational-title">Veja os números detalhados</div>
       <div class="rational-row">
         <span class="rational-desc">Custo mensal de atendimento</span>
-        <span class="rational-formula" id="f1">—</span>
+        <span class="rational-tip" id="f1-tip" data-tip="—">i</span>
         <span class="rational-result" id="rr1">—</span>
       </div>
       <div class="rational-row">
-        <span class="rational-desc">Atendimentos automatizáveis (cenário selecionado)</span>
-        <span class="rational-formula" id="f2">—</span>
+        <span class="rational-desc">Atendimentos automatizáveis</span>
+        <span class="rational-tip" id="f2-tip" data-tip="—">i</span>
         <span class="rational-result" id="rr2">—</span>
       </div>
       <div class="rational-row">
-        <span class="rational-desc">Economia mensal com automação</span>
-        <span class="rational-formula" id="f3">—</span>
+        <span class="rational-desc">Economia com automação total</span>
+        <span class="rational-tip" id="f3-tip" data-tip="—">i</span>
         <span class="rational-result highlight" id="rr3">—</span>
       </div>
+      <div class="rational-row">
+        <span class="rational-desc">Economia com automação parcial</span>
+        <span class="rational-tip" data-tip="O que é: tempo economizado pelo time com tarefas que a automação resolve parcialmente — primeira resposta imediata 24/7, coleta de nome e e-mail, mensagem de boas-vindas fora do horário. Como calculamos: custo mensal × 30%, estimativa conservadora de eficiência ganha mesmo em atendimentos que ainda passam para o humano.">i</span>
+        <span class="rational-result highlight" id="rr3b">—</span>
+      </div>
       <div class="rational-row" id="rational-receita-row">
-        <span class="rational-desc">Receita incremental (+5% conversão)</span>
-        <span class="rational-formula" id="f4">—</span>
+        <span class="rational-desc">Receita incremental</span>
+        <span class="rational-tip" id="f4-tip" data-tip="—">i</span>
         <span class="rational-result highlight" id="rr4">—</span>
       </div>
       <div class="rational-row">
         <span class="rational-desc">Ganho total anual</span>
-        <span class="rational-formula" id="f5">—</span>
+        <span class="rational-tip" id="f5-tip" data-tip="—">i</span>
         <span class="rational-result highlight" id="rr5">—</span>
       </div>
       <div class="rational-row">
         <span class="rational-desc">Investimento anual no plano</span>
-        <span class="rational-formula" id="f6">—</span>
+        <span class="rational-tip" id="f6-tip" data-tip="—">i</span>
         <span class="rational-result" id="rr6">—</span>
       </div>
-    </div>
-
+      </div>
+ </div>
     <div class="roi-box" id="roi-box">
       <div class="roi-box-left">
         <h4 id="roi-title">ROI estimado (12 meses)</h4>
@@ -486,7 +605,7 @@
         <div class="risk-icon">⏳</div>
         <div class="risk-body">
           <div class="risk-title">Revisão de conta leva 24–48h</div>
-          <div class="risk-desc">Mesmo após solicitar revisão à Meta, o processo leva de 24 a 48 horas úteis. Durante esse período, a empresa fica sem o canal principal de atendimento.</div>
+          <div class="risk-desc">Mesmo após solicitar revisão à Meta, o processo leva de 24 a 48 horas úteis. Enquanto isso, seus clientes podem ficar sem respostas e você pode perder oportunidades de novas vendas.</div>
           <span class="risk-stat">24–48h sem atendimento via WhatsApp</span>
         </div>
       </div>
@@ -531,7 +650,28 @@
     </div>
   </div>
 
-  <!-- ── PERGUNTAS ── -->
+  <!-- ── BENCHMARKS DE TEMPO E BAN META ── -->
+  <div class="benchmark-wrap" style="margin-bottom: 20px;">
+    <div class="bench-card">
+      <h3>Tempo economizado com automação — benchmarks</h3>
+      <div class="compare-row"><span class="compare-dim">Horas economizadas/dia por atendente com IA</span><span class="badge badge-g">+2h/dia (HubSpot, 2024)</span></div>
+      <div class="compare-row"><span class="compare-dim">Aumento de produtividade em atendimento com IA</span><span class="badge badge-g">+14% tickets/hora (Freshworks)</span></div>
+      <div class="compare-row"><span class="compare-dim">Redução no tempo de resposta com automação</span><span class="badge badge-g">69% mais rápido (Gartner)</span></div>
+      <div class="compare-row"><span class="compare-dim">Problemas resolvidos mais rápido com IA assistida</span><span class="badge badge-g">47% mais rápido (Fullview, 2025)</span></div>
+      <div class="compare-row"><span class="compare-dim">Atendentes que dizem que IA facilita responder tickets</span><span class="badge badge-g">84% (HubSpot, State of AI)</span></div>
+      <div class="bench-source">Fontes: HubSpot State of AI 2024, Freshworks CX Benchmark, Gartner, Fullview 2025</div>
+    </div>
+
+    <div class="bench-card">
+      <h3>Risco de banimento sem API oficial — impacto em tempo</h3>
+      <div class="compare-row"><span class="compare-dim">Bloqueio por disparo em massa sem API</span><span class="badge badge-r">1 a 7 dias sem enviar</span></div>
+      <div class="compare-row"><span class="compare-dim">Suspensão grave ou reincidente</span><span class="badge badge-r">Até 30 dias bloqueado</span></div>
+      <div class="compare-row"><span class="compare-dim">Tempo de análise do recurso pela Meta</span><span class="badge badge-r">24 a 48h úteis</span></div>
+      <div class="compare-row"><span class="compare-dim">Envio em massa sem API pode reduzir limite de mensagens</span><span class="badge badge-r">Queda de 90%+ na capacidade</span></div>
+      <div class="compare-row"><span class="compare-dim">Risco de perda permanente do número</span><span class="badge badge-r">Banimento definitivo</span></div>
+      <div class="bench-source">Fontes: Meta Business Messaging Policy (2025), ycloud.com, chakrahq.com</div>
+    </div>
+  </div>
   <div class="perguntas">
     <h3>Perguntas importantes para o lead</h3>
     <p class="casos-sub">Clique em qualquer card para ver como conduzir a conversa.</p>
@@ -617,7 +757,7 @@
         <div class="caso-tag">RD Station Conversas</div>
         <div class="caso-title">Organizar leads com etiquetas automáticas</div>
         <div class="caso-desafio"><strong>Desafio:</strong> Direcionar leads para fluxos diferentes manualmente, sem escala.</div>
-        <div class="caso-solucao">Etiquetas vinculadas a segmentações automáticas. Cada lead passou a ser direcionado para o fluxo certo sem intervenção humana.</div>
+        <div class="caso-solucao"><strong>Solução:</strong> Etiquetas vinculadas a segmentações automáticas. Cada lead passou a ser direcionado para o fluxo certo sem intervenção humana.</div>
         <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200002Uw2KV" target="_blank">Ver na comunidade →</a>
       </div>
 
@@ -626,7 +766,7 @@
         <div class="caso-tag">RD Station Conversas</div>
         <div class="caso-title">WhatsApp integrado ao funil consultivo</div>
         <div class="caso-desafio"><strong>Desafio:</strong> Negociações esfriando e histórico perdido nos celulares dos vendedores.</div>
-        <div class="caso-solucao">Templates por etapa do funil e automação por comportamento do lead. Histórico centralizado deu contexto ao vendedor em cada abordagem.</div>
+        <div class="caso-solucao"><strong>Solução:</strong> Templates por etapa do funil e automação por comportamento do lead. Histórico centralizado deu contexto ao vendedor em cada abordagem.</div>
         <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200001J2OMZKA3/no-nosso-neg%C3%B3cio-temos-um-ciclo-de-venda-consultivo-como-posso-usar-o-whatsapp-de-forma-integrada-ao-funil-do-rd-crm-para-acelerar-negocia%C3%A7%C3%B5es-e-manter-leads-engajados" target="_blank">Ver na comunidade →</a>
       </div>
 
@@ -635,7 +775,7 @@
         <div class="caso-tag">RD Station Conversas</div>
         <div class="caso-title">Chatbot com escalada humana inteligente</div>
         <div class="caso-desafio"><strong>Desafio:</strong> Time gastando tempo com atendimentos simples, sem espaço para casos complexos.</div>
-        <div class="caso-solucao">Chatbot resolve dúvidas repetitivas e transfere automaticamente os casos complexos. O time passou a receber só o que precisava de atenção.</div>
+        <div class="caso-solucao"><strong>Solução:</strong> Chatbot resolve dúvidas repetitivas e transfere automaticamente os casos complexos. O time passou a receber só o que precisava de atenção.</div>
         <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V2000031gRE1" target="_blank">Ver na comunidade →</a>
       </div>
 
@@ -643,27 +783,27 @@
         <div class="caso-emoji">📋</div>
         <div class="caso-tag">RD Marketing + Conversas</div>
         <div class="caso-title">Fim das planilhas e do WhatsApp pessoal</div>
-        <div class="caso-desafio"><strong>Desafio:</strong> Leads em planilhas, abordados pelo WhatsApp pessoal. Histórico perdido.</div>
-        <div class="caso-solucao">Passagem de bastão automatizada por qualificação. Vendedor recebe contexto completo antes de abrir a conversa e atendimento padronizado com templates.</div>
+        <div class="caso-desafio"><strong>Desafio:</strong> Leads em planilhas e abordados pelo WhatsApp pessoal dos vendedores geram falta de visibilidade do andamento das negociações e sem histórico.</div>
+        <div class="caso-solucao"><strong>Solução:</strong> Passagem de bastão automatizada por qualificação. Vendedor recebe contexto completo antes de abrir a conversa e atendimento padronizado com templates.</div>
         <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200002ndOmG" target="_blank">Ver na comunidade →</a>
       </div>
 
       <div class="caso-visual">
         <div class="caso-emoji">📡</div>
-        <div class="caso-tag">RD Station CRM</div>
-        <div class="caso-title">Funil e performance de vendedores em tempo real</div>
-        <div class="caso-desafio"><strong>Desafio:</strong> Sem clareza sobre gargalos no funil e motivo dos "losts".</div>
-        <div class="caso-solucao">IA para insights de performance + gráfico de atendimentos em 6 meses para identificar sazonalidade. CRM Live para acompanhamento em tempo real.</div>
-        <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200002b2EmZ" target="_blank">Ver na comunidade →</a>
+        <div class="caso-tag">RD Station Conversas</div>
+        <div class="caso-title">Redução do tempo de espera e vácuo de leads</div>
+        <div class="caso-desafio"><strong>Desafio:</strong> otimizar o atendimento ao cliente, evitando que leads fiquem no vácuo e garantindo que o tempo da equipe seja dedicado a questões mais complexas, em vez de responder perguntas repetitiva.</div>
+        <div class="caso-solucao"><strong>Solução:</strong> Utilizar um chatbot para lidar com tarefas repetitivas e transferir conversas complexas para um atendente humano, otimizando o tempo da equipe e a experiência do lead.</div>
+        <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V2000031gRE1KAM/dica-chatbots" target="_blank">Ver na comunidade →</a>
       </div>
 
       <div class="caso-visual">
         <div class="caso-emoji">🏠</div>
-        <div class="caso-tag">RD Marketing + CRM</div>
-        <div class="caso-title">Leads imobiliários chegando "quentes"</div>
-        <div class="caso-desafio"><strong>Desafio:</strong> Leads chegando frios mesmo com automações rodando.</div>
-        <div class="caso-solucao">Passagem baseada em comportamento (cliques em CTAs, consumo de conteúdo) em vez de tempo. Fluxos com provas sociais e conteúdo de maturidade antes do contato comercial.</div>
-        <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200002bFQoS" target="_blank">Ver na comunidade →</a>
+        <div class="caso-tag">RD Station Conversas + RD Station Marketing + RD Station CRM</div>
+        <div class="caso-title">Uso do WhatsApp para agilizar o processo de atendimento e qualificação</div>
+        <div class="caso-desafio"><strong>Desafio:</strong> Escalar o atendimento e a qualificação de leads no agronegócio, reduzindo o Tempo Médio de Espera (TME). O setor sofria com processos manuais de prospecção, perda de oportunidades no CRM e dificuldade em prestar suporte técnico rápido ao produtor rural após a compra.</div>
+        <div class="caso-solucao"><strong>Solução:</strong> Implementação de Agentes de IA e Bots integrados ao RD Station Marketing e CRM para automatizar a qualificação, distribuição por DDD e cadência comercial. A estratégia incluiu ativações ativas via WhatsApp para lançamentos, recuperação de vendas perdidas e uso de QR Codes em produtos para suporte técnico imediato.</div>
+        <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200000x1qw8KAA/como-uso-estrat%C3%A9gias-de-whatsapp-nas-empresas-do-agro" target="_blank">Ver na comunidade →</a>
       </div>
 
     </div>
@@ -680,6 +820,17 @@
 <script>
 var autoRate = 0.30;
 var temRepetitivo = true;
+var cenarioPct = 1; // conversão incremental padrão conservador
+
+function selectCenario(pct) {
+  cenarioPct = pct;
+  [1,3,6].forEach(function(p) {
+    document.getElementById('cb'+p).classList.toggle('active', p === pct);
+  });
+  var labels = {1:'Conservador +1%', 3:'Possível +3%', 6:'Otimista +6%'};
+  document.getElementById('cenario-label').textContent = labels[pct];
+  calc();
+}
 
 function selectRepetitivo(val) {
   temRepetitivo = val === 'sim';
@@ -705,7 +856,6 @@ function toggleBlind() {
   document.getElementById('conv-known').classList.toggle('visible', !isBlind);
   document.getElementById('blindspot-panel').classList.toggle('visible', isBlind);
   document.getElementById('stat-receita').classList.toggle('dimmed', isBlind);
-  document.getElementById('stat-anual').classList.toggle('dimmed', isBlind);
   document.getElementById('rational-receita-row').style.opacity = isBlind ? '0.3' : '1';
   var roiBox = document.getElementById('roi-box');
   if (isBlind) {
@@ -749,14 +899,16 @@ function calc() {
   document.getElementById('v-plano').textContent   = fmt(plano) + '/mês';
   document.getElementById('d-plano-anual').textContent = fmt(investAnual);
 
-  var custoMensal   = func * salario * tempo;
-  var custoPorAtend = atend > 0 ? custoMensal / atend : 0;
-  var atendAuto     = Math.round(atend * autoRate);
-  var economiaMes   = custoMensal * autoRate;
+  var custoMensal    = func * salario * tempo;
+  var custoPorAtend  = atend > 0 ? custoMensal / atend : 0;
+  var atendAuto      = Math.round(atend * autoRate);
+  var economiaMes    = custoMensal * autoRate;        // automação total
+  var economiaParcial = custoMensal * 0.30;           // automação parcial: 1ª resposta, coleta dados, 24/7
 
   document.getElementById('d-custo-total').textContent = fmt(custoMensal) + '/mês';
   document.getElementById('d-custo-por').textContent   = fmt(custoPorAtend) + '/atend.';
   document.getElementById('r-economia').textContent    = fmt(economiaMes) + '/mês';
+  document.getElementById('r-parcial').textContent     = fmt(economiaParcial) + '/mês';
 
   // Update scenario cards with economy values
   [10,30,50].forEach(function(pct) {
@@ -764,36 +916,41 @@ function calc() {
     document.getElementById('sc'+pct+'-val').textContent = 'Economia: ' + fmt(econ) + '/mês';
   });
 
-  // Rational
-  document.getElementById('f1').textContent  = func + ' func. × ' + fmt(salario) + ' × ' + Math.round(tempo*100) + '%';
-  document.getElementById('rr1').textContent = fmt(custoMensal) + '/mês';
-  document.getElementById('f2').textContent  = fmtN(atend) + ' atend. × ' + Math.round(autoRate*100) + '%';
-  document.getElementById('rr2').textContent = fmtN(atendAuto) + ' atendimentos';
-  document.getElementById('f3').textContent  = fmt(custoMensal) + ' × ' + Math.round(autoRate*100) + '%';
-  document.getElementById('rr3').textContent = fmt(economiaMes) + '/mês';
-  document.getElementById('f6').textContent  = fmt(plano) + ' × 12';
-  document.getElementById('rr6').textContent = fmt(investAnual);
+  // Rational tooltips — o que é + como calculamos
+  document.getElementById('f1-tip').dataset.tip  = 'O que é: o total que a empresa gasta por mês com funcionários dedicados ao atendimento — salário, encargos e o tempo que cada um passa respondendo clientes. Como calculamos: ' + func + ' funcionário(s) × R$' + salario.toLocaleString('pt-BR') + ' de salário × ' + Math.round(tempo*100) + '% do tempo em atendimento.';
+  document.getElementById('rr1').textContent  = fmt(custoMensal) + '/mês';
+
+  document.getElementById('f2-tip').dataset.tip  = 'O que é: o número de atendimentos que poderiam ser resolvidos 100% por automação, sem precisar de nenhum humano — perguntas repetitivas como horário, preço, status de pedido. Como calculamos: ' + fmtN(atend) + ' atendimentos/mês × ' + Math.round(autoRate*100) + '% de repetitivos (cenário selecionado).';
+  document.getElementById('rr2').textContent  = fmtN(atendAuto) + ' atendimentos';
+
+  document.getElementById('f3-tip').dataset.tip  = 'O que é: o dinheiro que a empresa deixa de gastar porque esses atendimentos passam a ser resolvidos pela automação, sem custo de tempo humano. Como calculamos: ' + fmt(custoMensal) + ' de custo mensal × ' + Math.round(autoRate*100) + '% de atendimentos automatizáveis.';
+  document.getElementById('rr3').textContent  = fmt(economiaMes) + '/mês';
+
+  document.getElementById('rr3b').textContent = fmt(economiaParcial) + '/mês';
+
+  document.getElementById('f6-tip').dataset.tip  = 'O que é: o total que a empresa investiria no RD Station Conversas ao longo de 12 meses. Como calculamos: ' + fmt(plano) + '/mês × 12 meses. Não inclui custos de conversas cobrados pela Meta.';
+  document.getElementById('rr6').textContent  = fmt(investAnual);
 
   if (isBlind) {
-    var receitaPot = leads * 0.05 * ticket;
+    var receitaPot = leads * (cenarioPct/100) * ticket;
     document.getElementById('bs1').textContent = fmt(receitaPot);
     document.getElementById('bs2').textContent = fmtN(Math.round(leads * 0.40)) + ' atend.';
     document.getElementById('r-receita').textContent = '—';
-    document.getElementById('r-anual').textContent   = '—';
-    document.getElementById('f4').textContent  = 'não calculado';
+    document.getElementById('f4-tip').dataset.tip = 'O que é: receita adicional gerada com melhora na taxa de conversão via atendimento mais rápido e consistente. Como calculamos: não calculado — prospect não tem dado de conversão atual. Use o painel vermelho ao lado para mostrar o potencial perdido.';
     document.getElementById('rr4').textContent = '—';
-    var totalAnualBlind = economiaMes * 12;
-    document.getElementById('f5').textContent  = fmt(economiaMes) + ' × 12';
+    var totalAnualBlind = (economiaMes + economiaParcial) * 12;
+    document.getElementById('r-anual').textContent = fmt(totalAnualBlind);
+    document.getElementById('f5-tip').dataset.tip = 'O que é: soma de todos os ganhos ao longo de 12 meses — economia com automação total e parcial. A receita incremental não foi incluída por falta de dado de conversão do prospect. Como calculamos: (' + fmt(economiaMes) + ' automação total + ' + fmt(economiaParcial) + ' automação parcial) × 12 meses.';
     document.getElementById('rr5').textContent = fmt(totalAnualBlind);
     document.getElementById('r-roi').textContent = investAnual > 0 ? (totalAnualBlind/investAnual).toFixed(1)+'x' : '0x';
   } else {
-    var receitaIncr = leads * 0.05 * ticket;
-    var totalAnual  = (economiaMes + receitaIncr) * 12;
+    var receitaIncr = leads * (cenarioPct/100) * ticket;
+    var totalAnual  = (economiaMes + economiaParcial + receitaIncr) * 12;
     document.getElementById('r-receita').textContent = fmt(receitaIncr) + '/mês';
     document.getElementById('r-anual').textContent   = fmt(totalAnual);
-    document.getElementById('f4').textContent  = fmtN(leads) + ' × 5% × ' + fmt(ticket);
+    document.getElementById('f4-tip').dataset.tip = 'O que é: a receita adicional que a empresa pode gerar com uma melhora na taxa de conversão — resultado de respostas mais rápidas, atendimento 24/7 e menos leads sem retorno. Como calculamos: ' + fmtN(leads) + ' leads/mês × +' + cenarioPct + '% de conversão incremental × ' + fmt(ticket) + ' de ticket médio.';
     document.getElementById('rr4').textContent = fmt(receitaIncr) + '/mês';
-    document.getElementById('f5').textContent  = '(' + fmt(economiaMes) + ' + ' + fmt(receitaIncr) + ') × 12';
+    document.getElementById('f5-tip').dataset.tip = 'O que é: a soma de tudo que a empresa ganha ou economiza em 12 meses com a ferramenta — automação total, automação parcial e receita incremental. Como calculamos: (' + fmt(economiaMes) + ' automação total + ' + fmt(economiaParcial) + ' automação parcial + ' + fmt(receitaIncr) + ' receita incremental) × 12 meses.';
     document.getElementById('rr5').textContent = fmt(totalAnual);
     document.getElementById('r-roi').textContent = investAnual > 0 ? (totalAnual/investAnual).toFixed(1)+'x' : '0x';
   }
