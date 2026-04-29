@@ -211,8 +211,14 @@
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
       <div class="field">
         <label>Seu Nome</label>
-        <input type="text" id="vendedor_nome" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0;">
+        <select id="vendedor_nome" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0; background: white; height: 40px;">
+         <option value="" disabled selected>Selecione seu nome...</option>
+         <option value="Mayara Alves">Mayara Alves</option>
+         <option value="Gabriela Sousa">Gabriela Sousa</option>
+         <option value="Mellory Oliveira">Mellory Oliveira</option>
+         </select>
       </div>
+      
       <div class="field">
         <label>Número da Oportunidade (Salesforce)</label>
         <input type="text" id="sf_id" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0;">
