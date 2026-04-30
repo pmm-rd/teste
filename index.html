@@ -1,9 +1,9 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> Sales Tool Kit — RD Station Conversas</title>
+<title>Sales Tool Kit — RD Station Conversas</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F0F4F8; color: #1E293B; min-height: 100vh; }
@@ -11,6 +11,29 @@
   header { background: #00A896; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   header h1 { font-size: 18px; font-weight: 600; color: #fff; }
   header span { font-size: 13px; color: rgba(255,255,255,0.85); }
+
+  /* Sticky nav bar */
+  .sticky-nav { position: sticky; top: 0; z-index: 50; background: #fff; border-bottom: 1px solid #E2E8F0; padding: 10px 24px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .sticky-nav-label { font-size: 12px; color: #64748B; font-weight: 500; }
+  .nav-btn { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; border: none; cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-block; }
+  .nav-btn-calc { background: rgba(0,168,150,0.1); color: #00A896; }
+  .nav-btn-calc:hover { background: rgba(0,168,150,0.2); }
+  .nav-btn-bench { background: #FFF7ED; color: #B45309; border: 1px solid #FED7AA; }
+  .nav-btn-bench:hover { background: #FED7AA; }
+  .nav-btn-bench-icon { margin-right: 4px; }
+
+  /* Popup reminder */
+  .popup-reminder { position: fixed; bottom: 24px; right: 24px; z-index: 100; background: #fff; border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); padding: 18px 20px; max-width: 300px; border-left: 4px solid #F59E0B; display: none; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+  .popup-reminder.visible { display: block; }
+  .popup-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+  .popup-icon { font-size: 20px; flex-shrink: 0; }
+  .popup-title { font-size: 13px; font-weight: 700; color: #1E293B; line-height: 1.3; }
+  .popup-desc { font-size: 12px; color: #64748B; line-height: 1.5; }
+  .popup-close { font-size: 16px; color: #94A3B8; cursor: pointer; flex-shrink: 0; line-height: 1; background: none; border: none; padding: 0; }
+  .popup-close:hover { color: #475569; }
+  .popup-cta { display: inline-block; margin-top: 10px; font-size: 12px; font-weight: 600; color: #fff; background: #F59E0B; padding: 6px 14px; border-radius: 8px; text-decoration: none; border: none; cursor: pointer; width: 100%; text-align: center; }
+  .popup-cta:hover { background: #D97706; }
 
   .container { max-width: 980px; margin: 0 auto; padding: 32px 24px; }
 
@@ -188,87 +211,105 @@
   .caso-link { font-size: 11px; color: #00A896; text-decoration: none; font-weight: 600; }
   .caso-link:hover { text-decoration: underline; }
 
+  /* Exit popup */
+  .exit-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .exit-overlay.visible { display: flex; }
+  .exit-modal { background: #fff; border-radius: 16px; padding: 32px 28px; max-width: 380px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: popIn 0.25s ease; }
+  @keyframes popIn { from { opacity:0; transform: scale(0.92); } to { opacity:1; transform: scale(1); } }
+  .exit-emoji { font-size: 40px; margin-bottom: 12px; }
+  .exit-title { font-size: 18px; font-weight: 700; color: #1E293B; margin-bottom: 8px; }
+  .exit-desc { font-size: 13px; color: #64748B; line-height: 1.6; margin-bottom: 20px; }
+  .exit-btn-primary { display: block; width: 100%; background: #F59E0B; color: #fff; font-size: 14px; font-weight: 700; padding: 12px; border-radius: 10px; border: none; cursor: pointer; margin-bottom: 10px; }
+  .exit-btn-primary:hover { background: #D97706; }
+  .exit-btn-secondary { font-size: 12px; color: #94A3B8; background: none; border: none; cursor: pointer; text-decoration: underline; }
   footer { text-align: center; padding: 28px 24px; font-size: 11px; color: #94A3B8; line-height: 1.7; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1> Cálculadora de ROI e geração de valor RD Station Conversas</h1>
+  <h1>Sales Tool Kit — RD Station Conversas</h1>
   <span>Ferramenta interna para vendedores</span>
 </header>
 
-<div class="container">
-
-  <div class="intro">
-    <h2>Como usar esta ferramenta</h2>
-    <p>Preencha os campos abaixo com os dados do prospect durante a descoberta. <strong>Se o cliente não souber um dado, use as estimativas de cenário.</strong> Mostre o número de ROI antes de revelar o preço da ferramenta.</p>
-  </div>
-  
-  <div class="card" style="margin-bottom: 28px; border: 2px solid #00A896;">
-  <h3>Identificação da Simulação</h3>
-  <form id="registroForm">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-      <div class="field">
-        <label>Seu Nome</label>
-        <select id="vendedor_nome" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0; background: white; height: 40px;">
-         <option value="" disabled selected>Selecione seu nome...</option>
-         <option value="Mayara Alves">Mayara Alves</option>
-         <option value="Gabriela Sousa">Gabriela Sousa</option>
-         <option value="Mellory Oliveira">Mellory Oliveira</option>
-         </select>
-      </div>
-      
-      <div class="field">
-        <label>Número da Oportunidade (Salesforce)</label>
-        <input type="text" id="sf_id" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0;">
-      </div>
-    </div>
-    <button type="submit" id="btnSalvar" style="width: 100%; background: #00A896; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;">
-      Salvar na Planilha
-    </button>
-  </form>
-  <p id="msgSucesso" style="display:none; color: #059669; font-size: 13px; margin-top: 10px; text-align: center; font-weight: bold;">
-    ✔ Dados salvos com sucesso!
-  </p>
+<!-- Sticky nav -->
+<div class="sticky-nav">
+  <span class="sticky-nav-label">Ir para:</span>
+  <a class="nav-btn nav-btn-calc" href="#custo-atendimento">🧮 Calculadora</a>
+  <a class="nav-btn nav-btn-bench" href="#benchmarks"><span class="nav-btn-bench-icon">⚡</span>Lead sem dados? Pule para benchmarks</a>
 </div>
 
-<script>
-document.getElementById('registroForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const btn = document.getElementById('btnSalvar');
-  const msg = document.getElementById('msgSucesso');
-  const nome = document.getElementById('vendedor_nome').value;
-  const opp = document.getElementById('sf_id').value;
+<!-- Pop-up lembrete -->
+<div class="popup-reminder" id="popup-opp">
+  <div class="popup-top">
+    <span class="popup-icon">📋</span>
+    <div class="popup-title">Lembra de preencher o número da oportunidade!</div>
+    <button class="popup-close" onclick="fecharPopup()">×</button>
+  </div>
+  <p class="popup-desc">Antes de apresentar os resultados ao lead, certifique-se de ter preenchido o número da oportunidade no Salesforce lá no início da página.</p>
+  <button class="popup-cta" onclick="irParaFormulario()">↑ Ir para o formulário</button>
+</div>
 
-  btn.innerText = "Salvando...";
-  btn.disabled = true;
+<!-- Pop-up de saída -->
+<div class="exit-overlay" id="exit-overlay">
+  <div class="exit-modal">
+    <div class="exit-emoji">📋</div>
+    <div class="exit-title">Ei, não esqueça do formulário!</div>
+    <div class="exit-desc">Antes de fechar, certifique-se de ter preenchido o seu nome e o número da oportunidade no Salesforce. Isso garante que a simulação fique registrada.</div>
+    <button class="exit-btn-primary" onclick="irParaFormularioExit()">↑ Preencher agora</button>
+    <button class="exit-btn-secondary" onclick="fecharExitPopup()">Já preenchi, pode fechar</button>
+  </div>
+</div>
 
-  // URL que você vai gerar no Passo 2
-  const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzq6Zt6Lcknr918f5FIlTYJi-hO0cabcK7LK3iHGQAiYKtJeHyHo9hWwUfIc6d0McLN/exec';
+<div class="container">
 
-  // Enviando os dados via URL (mais simples e evita erros)
-  fetch(`${URL_SCRIPT}?nome=${encodeURIComponent(nome)}&oportunidade=${encodeURIComponent(opp)}`, {
-    method: 'GET',
-    mode: 'no-cors'
-  })
-  .then(() => {
-    msg.style.display = "block";
-    btn.innerText = "Salvo!";
-    btn.style.background = "#94A3B8";
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Erro ao salvar.");
-    btn.disabled = false;
-    btn.innerText = "Tentar novamente";
+  <div class="intro" id="calculadora">
+    <h2>Como usar esta ferramenta</h2>
+    <p>Preencha os campos abaixo com os dados do prospect durante a descoberta. <strong>Se o cliente não souber nenhum dado, use o botão acima para ir direto aos benchmarks de mercado.</strong> Mostre o número de ROI antes de revelar o preço da ferramenta.</p>
+  </div>
+
+  <!-- Formulário de identificação -->
+  <div class="card" style="margin-bottom: 28px; border: 2px solid #00A896;" id="form-identificacao">
+    <h3>Identificação da simulação</h3>
+    <form id="registroForm">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="field" style="margin-bottom:0;">
+          <label>Seu nome</label>
+          <select id="vendedor_nome" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #E2E8F0; background:#fff; height:40px; font-size:13px; color:#1E293B;">
+            <option value="" disabled selected>Selecione seu nome...</option>
+            <option value="Mayara Alves">Mayara Alves</option>
+            <option value="Gabriela Sousa">Gabriela Sousa</option>
+            <option value="Mellory Oliveira">Mellory Oliveira</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>Número da oportunidade (Salesforce)</label>
+          <input type="text" id="sf_id" required placeholder="Ex: 0D5V200002..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #E2E8F0; font-size:13px; color:#1E293B;">
+        </div>
+      </div>
+      <button type="submit" id="btnSalvar" style="width:100%; background:#00A896; color:#fff; padding:12px; border:none; border-radius:8px; font-weight:700; cursor:pointer; margin-top:14px; font-size:14px;">
+        Salvar na planilha
+      </button>
+    </form>
+    <p id="msgSucesso" style="display:none; color:#059669; font-size:13px; margin-top:10px; text-align:center; font-weight:600;">✔ Dados salvos com sucesso!</p>
+  </div>
+
+  <script>
+  document.getElementById('registroForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSalvar');
+    const msg = document.getElementById('msgSucesso');
+    const nome = document.getElementById('vendedor_nome').value;
+    const opp  = document.getElementById('sf_id').value;
+    btn.innerText = 'Salvando...';
+    btn.disabled = true;
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzq6Zt6Lcknr918f5FIlTYJi-hO0cabcK7LK3iHGQAiYKtJeHyHo9hWwUfIc6d0McLN/exec';
+    fetch(`${URL_SCRIPT}?nome=${encodeURIComponent(nome)}&oportunidade=${encodeURIComponent(opp)}`, { method:'GET', mode:'no-cors' })
+      .then(() => { msg.style.display='block'; btn.innerText='Salvo!'; btn.style.background='#94A3B8'; popupSalvo = true; })
+      .catch(err => { console.error(err); alert('Erro ao salvar.'); btn.disabled=false; btn.innerText='Tentar novamente'; });
   });
-});
-</script>
-
-  <!-- ── BLOCO 1 ── -->
-  <p class="section-title">1. Custo atual de atendimento</p>
+  </script>
+  <p class="section-title" id="custo-atendimento">1. Custo atual de atendimento</p>
   <div class="grid2" style="margin-bottom: 8px;">
     <div class="card">
       <h3>Equipe de atendimento</h3>
@@ -481,7 +522,7 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
       <div class="benefit-row">
         <div class="benefit-icon">🤖</div>
         <div class="benefit-body">
-          <div class="benefit-headline">Com 30% de automação parcial, você economiza <strong id="rr3b"></strong></div>
+          <div class="benefit-headline">Com 30% de automação parcial, você economiza <strong id="b1-val">R$0/mês</strong></div>
           <div class="benefit-desc">Mesmo os atendimentos que ainda precisam de um humano ficam mais eficientes: o bot responde na hora, coleta as informações iniciais e direciona o cliente — tudo antes de o atendente abrir a conversa. Menos tempo gasto por atendimento, mais atendimentos resolvidos com a mesma equipe.</div>
         </div>
       </div>
@@ -502,14 +543,14 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
       <div class="benefit-row">
         <div class="benefit-icon">💼</div>
         <div class="benefit-body">
-          <div class="benefit-headline">Esse ganho reduz a necessidade de novas contratações ou sobrecarga do time.</div>
-          <div class="benefit-desc">Em vez de ampliar o time ou sobrecarregar seus atendentes para dar conta do volume, a automação gera uma economia equivalente ou evita que esse gasto precise acontecer.</div>
+          <div class="benefit-headline">Esse ganho anual equivale a <strong id="b4-val">0 meses</strong> do salário de um novo atendente</div>
+          <div class="benefit-desc">Em vez de ampliar o time para dar conta do volume, a automação gera uma economia equivalente — ou evita que esse gasto precise acontecer.</div>
         </div>
       </div>
     </div>
 
     <div class="rational">
-      <div class="rational-title">Veja os números detalhados</div>
+      <div class="rational-title">Como chegamos nesses números</div>
       <div class="rational-row">
         <span class="rational-desc">Custo mensal de atendimento</span>
         <span class="rational-tip" id="f1-tip" data-tip="—">i</span>
@@ -545,19 +586,11 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
         <span class="rational-tip" id="f6-tip" data-tip="—">i</span>
         <span class="rational-result" id="rr6">—</span>
       </div>
-      </div>
- </div>
-    <div class="roi-box" id="roi-box">
-      <div class="roi-box-left">
-        <h4 id="roi-title">ROI estimado (12 meses)</h4>
-        <p id="roi-sub">Conservador. Não considera ganhos de retenção, NPS, dados operacionais e produtividade do time.</p>
-      </div>
-      <div class="roi-number" id="r-roi">0x</div>
     </div>
   </div>
 
   <!-- ── BENCHMARKS ── -->
-  <p class="section-title">Benchmarks de mercado</p>
+  <p class="section-title" id="benchmarks">Benchmarks de mercado</p>
   <p style="font-size:12px; color:#94A3B8; margin-bottom:14px;">Use estes dados com leads que ainda não têm visibilidade da operação ou que questionam a necessidade da ferramenta.</p>
 
   <div class="benchmark-wrap" style="margin-bottom: 16px;">
@@ -611,7 +644,7 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
         <div class="risk-icon">⏳</div>
         <div class="risk-body">
           <div class="risk-title">Revisão de conta leva 24–48h</div>
-          <div class="risk-desc">Mesmo após solicitar revisão à Meta, o processo leva de 24 a 48 horas úteis. Enquanto isso, seus clientes podem ficar sem respostas e você pode perder oportunidades de novas vendas.</div>
+          <div class="risk-desc">Mesmo após solicitar revisão à Meta, o processo leva de 24 a 48 horas úteis. Durante esse período, a empresa fica sem o canal principal de atendimento.</div>
           <span class="risk-stat">24–48h sem atendimento via WhatsApp</span>
         </div>
       </div>
@@ -763,7 +796,7 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
         <div class="caso-tag">RD Station Conversas</div>
         <div class="caso-title">Organizar leads com etiquetas automáticas</div>
         <div class="caso-desafio"><strong>Desafio:</strong> Direcionar leads para fluxos diferentes manualmente, sem escala.</div>
-        <div class="caso-solucao"><strong>Solução:</strong> Etiquetas vinculadas a segmentações automáticas. Cada lead passou a ser direcionado para o fluxo certo sem intervenção humana.</div>
+        <div class="caso-solucao">Etiquetas vinculadas a segmentações automáticas. Cada lead passou a ser direcionado para o fluxo certo sem intervenção humana.</div>
         <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200002Uw2KV" target="_blank">Ver na comunidade →</a>
       </div>
 
@@ -772,7 +805,7 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
         <div class="caso-tag">RD Station Conversas</div>
         <div class="caso-title">WhatsApp integrado ao funil consultivo</div>
         <div class="caso-desafio"><strong>Desafio:</strong> Negociações esfriando e histórico perdido nos celulares dos vendedores.</div>
-        <div class="caso-solucao"><strong>Solução:</strong> Templates por etapa do funil e automação por comportamento do lead. Histórico centralizado deu contexto ao vendedor em cada abordagem.</div>
+        <div class="caso-solucao">Templates por etapa do funil e automação por comportamento do lead. Histórico centralizado deu contexto ao vendedor em cada abordagem.</div>
         <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200001J2OMZKA3/no-nosso-neg%C3%B3cio-temos-um-ciclo-de-venda-consultivo-como-posso-usar-o-whatsapp-de-forma-integrada-ao-funil-do-rd-crm-para-acelerar-negocia%C3%A7%C3%B5es-e-manter-leads-engajados" target="_blank">Ver na comunidade →</a>
       </div>
 
@@ -781,7 +814,7 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
         <div class="caso-tag">RD Station Conversas</div>
         <div class="caso-title">Chatbot com escalada humana inteligente</div>
         <div class="caso-desafio"><strong>Desafio:</strong> Time gastando tempo com atendimentos simples, sem espaço para casos complexos.</div>
-        <div class="caso-solucao"><strong>Solução:</strong> Chatbot resolve dúvidas repetitivas e transfere automaticamente os casos complexos. O time passou a receber só o que precisava de atenção.</div>
+        <div class="caso-solucao">Chatbot resolve dúvidas repetitivas e transfere automaticamente os casos complexos. O time passou a receber só o que precisava de atenção.</div>
         <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V2000031gRE1" target="_blank">Ver na comunidade →</a>
       </div>
 
@@ -789,27 +822,27 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
         <div class="caso-emoji">📋</div>
         <div class="caso-tag">RD Marketing + Conversas</div>
         <div class="caso-title">Fim das planilhas e do WhatsApp pessoal</div>
-        <div class="caso-desafio"><strong>Desafio:</strong> Leads em planilhas e abordados pelo WhatsApp pessoal dos vendedores geram falta de visibilidade do andamento das negociações e sem histórico.</div>
-        <div class="caso-solucao"><strong>Solução:</strong> Passagem de bastão automatizada por qualificação. Vendedor recebe contexto completo antes de abrir a conversa e atendimento padronizado com templates.</div>
+        <div class="caso-desafio"><strong>Desafio:</strong> Leads em planilhas, abordados pelo WhatsApp pessoal. Histórico perdido.</div>
+        <div class="caso-solucao">Passagem de bastão automatizada por qualificação. Vendedor recebe contexto completo antes de abrir a conversa e atendimento padronizado com templates.</div>
         <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200002ndOmG" target="_blank">Ver na comunidade →</a>
       </div>
 
       <div class="caso-visual">
         <div class="caso-emoji">📡</div>
-        <div class="caso-tag">RD Station Conversas</div>
-        <div class="caso-title">Redução do tempo de espera e vácuo de leads</div>
-        <div class="caso-desafio"><strong>Desafio:</strong> otimizar o atendimento ao cliente, evitando que leads fiquem no vácuo e garantindo que o tempo da equipe seja dedicado a questões mais complexas, em vez de responder perguntas repetitiva.</div>
-        <div class="caso-solucao"><strong>Solução:</strong> Utilizar um chatbot para lidar com tarefas repetitivas e transferir conversas complexas para um atendente humano, otimizando o tempo da equipe e a experiência do lead.</div>
-        <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V2000031gRE1KAM/dica-chatbots" target="_blank">Ver na comunidade →</a>
+        <div class="caso-tag">RD Station CRM</div>
+        <div class="caso-title">Funil e performance de vendedores em tempo real</div>
+        <div class="caso-desafio"><strong>Desafio:</strong> Sem clareza sobre gargalos no funil e motivo dos "losts".</div>
+        <div class="caso-solucao">IA para insights de performance + gráfico de atendimentos em 6 meses para identificar sazonalidade. CRM Live para acompanhamento em tempo real.</div>
+        <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200002b2EmZ" target="_blank">Ver na comunidade →</a>
       </div>
 
       <div class="caso-visual">
         <div class="caso-emoji">🏠</div>
-        <div class="caso-tag">RD Station Conversas + RD Station Marketing + RD Station CRM</div>
-        <div class="caso-title">Uso do WhatsApp para agilizar o processo de atendimento e qualificação</div>
-        <div class="caso-desafio"><strong>Desafio:</strong> Escalar o atendimento e a qualificação de leads no agronegócio, reduzindo o Tempo Médio de Espera (TME). O setor sofria com processos manuais de prospecção, perda de oportunidades no CRM e dificuldade em prestar suporte técnico rápido ao produtor rural após a compra.</div>
-        <div class="caso-solucao"><strong>Solução:</strong> Implementação de Agentes de IA e Bots integrados ao RD Station Marketing e CRM para automatizar a qualificação, distribuição por DDD e cadência comercial. A estratégia incluiu ativações ativas via WhatsApp para lançamentos, recuperação de vendas perdidas e uso de QR Codes em produtos para suporte técnico imediato.</div>
-        <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200000x1qw8KAA/como-uso-estrat%C3%A9gias-de-whatsapp-nas-empresas-do-agro" target="_blank">Ver na comunidade →</a>
+        <div class="caso-tag">RD Marketing + CRM</div>
+        <div class="caso-title">Leads imobiliários chegando "quentes"</div>
+        <div class="caso-desafio"><strong>Desafio:</strong> Leads chegando frios mesmo com automações rodando.</div>
+        <div class="caso-solucao">Passagem baseada em comportamento (cliques em CTAs, consumo de conteúdo) em vez de tempo. Fluxos com provas sociais e conteúdo de maturidade antes do contato comercial.</div>
+        <a class="caso-link" href="https://rdconectacomunidade.rdstation.com/s/question/0D5V200002bFQoS" target="_blank">Ver na comunidade →</a>
       </div>
 
     </div>
@@ -915,6 +948,9 @@ function calc() {
   document.getElementById('d-custo-por').textContent   = fmt(custoPorAtend) + '/atend.';
   document.getElementById('r-economia').textContent    = fmt(economiaMes) + '/mês';
   document.getElementById('r-parcial').textContent     = fmt(economiaParcial) + '/mês';
+  document.getElementById('b1-val') && (document.getElementById('b1-val').textContent = fmt(economiaParcial) + '/mês');
+  var mesesEquiv = salario > 0 ? (economiaParcial * 12 / salario).toFixed(1) : 0;
+  document.getElementById('b4-val') && (document.getElementById('b4-val').textContent = mesesEquiv + ' meses');
 
   // Update scenario cards with economy values
   [10,30,50].forEach(function(pct) {
@@ -963,6 +999,70 @@ function calc() {
 }
 
 calc();
+</script>
+<script>
+// Pop-up lembrete de oportunidade
+var popupSalvo = false;
+var popupFechado = false;
+var popupMostrado = false;
+
+function fecharPopup() {
+  document.getElementById('popup-opp').classList.remove('visible');
+  popupFechado = true;
+}
+
+function irParaFormulario() {
+  document.getElementById('form-identificacao').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('sf_id').focus();
+  fecharPopup();
+}
+
+window.addEventListener('scroll', function() {
+  if (popupSalvo || popupFechado) return;
+  var scrolled = window.scrollY || document.documentElement.scrollTop;
+  var total = document.documentElement.scrollHeight - window.innerHeight;
+  var pct = total > 0 ? scrolled / total : 0;
+  // Aparece quando o usuário passou de 35% da página e ainda não preencheu
+  if (pct > 0.35 && !popupMostrado) {
+    var opp = document.getElementById('sf_id') ? document.getElementById('sf_id').value.trim() : '';
+    var nome = document.getElementById('vendedor_nome') ? document.getElementById('vendedor_nome').value : '';
+    if (!opp || !nome) {
+      document.getElementById('popup-opp').classList.add('visible');
+      popupMostrado = true;
+    }
+  }
+});
+
+// Esconde popup quando os campos são preenchidos
+function checkFormFilled() {
+  var opp  = document.getElementById('sf_id') ? document.getElementById('sf_id').value.trim() : '';
+  var nome = document.getElementById('vendedor_nome') ? document.getElementById('vendedor_nome').value : '';
+  if (opp && nome) {
+    document.getElementById('popup-opp').classList.remove('visible');
+  }
+}
+function fecharExitPopup() {
+  document.getElementById('exit-overlay').classList.remove('visible');
+}
+
+function irParaFormularioExit() {
+  fecharExitPopup();
+  document.getElementById('form-identificacao').scrollIntoView({ behavior: 'smooth' });
+  setTimeout(function() { document.getElementById('sf_id').focus(); }, 400);
+}
+
+// Exit intent: detecta mouse saindo pelo topo da janela
+var exitMostrado = false;
+document.addEventListener('mouseleave', function(e) {
+  if (e.clientY <= 10 && !exitMostrado && !popupSalvo) {
+    var opp  = document.getElementById('sf_id') ? document.getElementById('sf_id').value.trim() : '';
+    var nome = document.getElementById('vendedor_nome') ? document.getElementById('vendedor_nome').value : '';
+    if (!opp || !nome) {
+      document.getElementById('exit-overlay').classList.add('visible');
+      exitMostrado = true;
+    }
+  }
+});
 </script>
 </body>
 </html>
